@@ -7,7 +7,7 @@ function TodoList({ todos, fetchTodos }) {
 
   const deleteTodo = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/todos/${id}`);
+      await axios.delete(`/api/todos/${id}`);
       fetchTodos(); // Refresh the list
     } catch (error) {
       console.error('Error deleting todo:', error);
@@ -17,7 +17,7 @@ function TodoList({ todos, fetchTodos }) {
   const toggleSection = async (id) => {
     const todo = todos.find(t => t._id === id); 
     try {
-      await axios.put(`http://localhost:5000/api/todos/${id}`, { 
+      await axios.put(`/api/todos/${id}`, { 
         ...todo, 
         completed: !todo.completed 
       });

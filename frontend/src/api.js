@@ -1,6 +1,7 @@
 import axios from 'axios';
-const BASE = 'http://localhost:5000/api';
 
+// Use relative path for API; works locally and in production
+const BASE = '/api/todos/';
 
 export async function fetchTodos() {
   try {
@@ -44,17 +45,12 @@ export async function updateTodo(id, updates) {
 
 export async function deleteTodo(id) {
   try {
-    
-    const res = await axios.delete(`${BASE}/todos/${id}`);
-    return { success: true, source: 'backend', data: res.data };
+    await axios.delete(`${BASE}/todos/${id}`);
+    return { success: true };
   } catch (e) {
-    console.warn('Backend delete failed, using localStorage fallback:', e);
-    
     let todos = JSON.parse(localStorage.getItem('todos') || '[]');
-
-    todos = todos.filter(t => t.id !== id && t._id !== id);
-
+    todos = todos.filter(t => t.id !== id);
     localStorage.setItem('todos', JSON.stringify(todos));
-    return { success: true, source: 'localStorage' };
+    return { success: true };
   }
 }

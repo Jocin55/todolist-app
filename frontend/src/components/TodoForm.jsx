@@ -21,7 +21,7 @@ function TodoForm({ fetchTodos }) {
   useEffect(() => {
     if (id) {
       axios
-        .get(`http://localhost:5000/api/todos/${id}`)
+        .get(`/api/todos/${id}`)
         .then(response => setFormData(response.data))
         .catch(error => console.error('Error fetching todo:', error));
     }
@@ -35,9 +35,9 @@ function TodoForm({ fetchTodos }) {
   e.preventDefault();
   try {
     if (id) {
-      await axios.put(`http://localhost:5000/api/todos/${id}`, formData);
+      await axios.put(`/api/todos/${id}`, formData);
     } else {
-      await axios.post('http://localhost:5000/api/todos', formData);
+      await axios.post('/api/todos/', formData);
     }
     navigate('/view');
     setTimeout(fetchTodos, 200); 
