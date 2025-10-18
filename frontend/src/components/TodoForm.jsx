@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import { createTodo, updateTodo, fetchTodos } from '../api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBookBookmark } from '@fortawesome/free-solid-svg-icons';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
-function TodoForm({ fetchTodos }) {
+function TodoForm({ fetchTodos: parentFetch }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -20,49 +20,42 @@ function TodoForm({ fetchTodos }) {
 
   useEffect(() => {
     if (id) {
-      axios
-        .get(`/api/todos/${id}`)
-        .then(response => setFormData(response.data))
-        .catch(error => console.error('Error fetching todo:', error));
+      fetchTodos().then((data) => {
+        const todo = data.find((t) => t.id === id);
+        if (todo) setFormData(todo);
+      });
     }
   }, [id]);
 
-  const handleChange = e => {
+  const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async e => {
-  e.preventDefault();
-  try {
-    if (id) {
-      await axios.put(`/api/todos/${id}`, formData);
-    } else {
-      await axios.post('/api/todos/', formData);
-    }
-    navigate('/view');
-    setTimeout(fetchTodos, 200); 
-  } catch (error) {
-    console.error('Error saving todo:', error);
-  }
-};
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (id) await updateTodo(id, formData);
+    else await createTodo(formData);
 
+    if (parentFetch) parentFetch();
+    navigate('/view');
+  };
 
   return (
     <div className="container mt-5">
       <div className="col-lg-6 col-md-8 col-sm-10 mx-auto">
         <div className="card shadow p-4 rounded-4 border-0">
-          <h2 className="text-center mb-4 fw-bold"> {id ? 'Edit To-Do' : 'Add To-Do'}  <FontAwesomeIcon icon={faBookBookmark}/> </h2>
+          <h2 className="text-center mb-4 fw-bold">
+            {id ? 'Edit To-Do' : 'Add To-Do'} <FontAwesomeIcon icon={faBookBookmark} />
+          </h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
               <label className="form-label fw-semibold" style={{color:"brown"}}>Task Name</label>
-              <input type="text" name="name" className="form-control" placeholder="Enter task name"value={formData.name} onChange={handleChange} required/>
+              <input type="text" name="name" className="form-control" placeholder="Enter task name" value={formData.name} onChange={handleChange} required />
             </div>
-
             <div className="mb-3">
               <label className="form-label fw-semibold" style={{color:"brown"}}>Description</label>
               <textarea name="description" className="form-control" placeholder="Add more task details" value={formData.description} onChange={handleChange}></textarea>
             </div>
-
             <div className="row">
               <div className="col-md-6 mb-3">
                 <label className="form-label fw-semibold" style={{color:"brown"}}>Start Date</label>
@@ -73,17 +66,15 @@ function TodoForm({ fetchTodos }) {
                 <input type="date" name="endDate" className="form-control" value={formData.endDate} onChange={handleChange}/>
               </div>
             </div>
-
             <div className="row">
               <div className="col-md-6 mb-3">
                 <label className="form-label fw-semibold" style={{color:"brown"}}>Progress Status</label>
-                <select name="status" className="form-select" value={formData.status} onChange={handleChange} >
+                <select name="status" className="form-select" value={formData.status} onChange={handleChange}>
                   <option value="pending">Pending</option>
                   <option value="in progress">In Progress</option>
                   <option value="completed">Completed</option>
                 </select>
               </div>
-
               <div className="col-md-6 mb-3">
                 <label className="form-label fw-semibold" style={{color:"brown"}}>Priority Level</label>
                 <select name="priority" className="form-select" value={formData.priority} onChange={handleChange}>
@@ -93,18 +84,16 @@ function TodoForm({ fetchTodos }) {
                 </select>
               </div>
             </div>
-
             <div className="d-grid mt-4">
-              <button type="submit" onClick={() => navigate(`/view`)} className="btn btn-outline-danger btn-lg">
-                 {id ? 'Update Task' : 'Add Task'} 
+              <button type="submit" className="btn btn-outline-danger btn-lg">
+                {id ? 'Update Task' : 'Add Task'}
               </button>
             </div>
           </form>
         </div>
       </div>
     </div>
-    
   );
-  
 }
+
 export default TodoForm;

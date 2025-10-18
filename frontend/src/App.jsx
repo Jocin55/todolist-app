@@ -10,7 +10,7 @@ import MyTasks  from './components/MyTasks.jsx';
 
 function App() {
   const [todos, setTodos] = useState([]);
-  const API_URL = 'http://localhost:5000/api/todos';
+  const API_URL = '/api/todos';
 
   useEffect(() => {
     fetchTodos();

@@ -1,16 +1,7 @@
 [
   {
-    "id": "fd7e0204-0d54-4698-81ea-e1f49efcb313",
-    "name": "paint",
-    "description": "",
-    "startDate": "",
-    "endDate": "",
-    "status": "pending",
-    "priority": "medium"
-  },
-  {
     "id": "061d89e3-0dba-48b3-8703-ff4db6f1b2b5",
-    "name": "comedy",
+    "name": "picture",
     "description": "",
     "startDate": "",
     "endDate": "",
